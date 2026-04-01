@@ -1,0 +1,195 @@
+{
+  "info": {
+    "_postman_id": "4b6e5e8e-cba1-4b13-8d3e-90f7a5c8ebfc",
+    "name": "Finance Backend API Assessment",
+    "description": "API Documentation for a scalable backend system managing financial records with role-based access control, data validation, and analytical dashboard summaries.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Admin\",\n  \"email\": \"jane@finance.com\",\n  \"password\": \"password123\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Registers a new user. The role can be VIEWER, ANALYST, or ADMIN."
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@finance.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Authenticates a user and returns a JWT token for authorization."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Records",
+      "item": [
+        {
+          "name": "Create Financial Record",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1500.50,\n  \"type\": \"EXPENSE\",\n  \"category\": \"Marketing\",\n  \"date\": \"2023-11-05T00:00:00.000Z\",\n  \"notes\": \"Campaign Ad Spend\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/records",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "records"]
+            },
+            "description": "Creates a new financial record. Requires ADMIN access."
+          }
+        },
+        {
+          "name": "Get Financial Records",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/records?type=EXPENSE&limit=10&page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "records"],
+              "query": [
+                { "key": "type", "value": "EXPENSE" },
+                { "key": "category", "value": "Marketing", "disabled": true },
+                { "key": "startDate", "value": "2023-01-01", "disabled": true },
+                { "key": "limit", "value": "10" },
+                { "key": "page", "value": "1" }
+              ]
+            },
+            "description": "Retrieves financial records with optional query parameters (type, category, startDate, endDate, page, limit). Requires ADMIN or ANALYST access."
+          }
+        },
+        {
+          "name": "Update Financial Record",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2000,\n  \"notes\": \"Updated budget\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/records/RECORD_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "records", "RECORD_ID_HERE"]
+            },
+            "description": "Partially updates an existing record. Requires ADMIN access."
+          }
+        },
+        {
+          "name": "Delete Financial Record",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/records/RECORD_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "records", "RECORD_ID_HERE"]
+            },
+            "description": "Soft deletes a record. Requires ADMIN access."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dashboard"]
+            },
+            "description": "Gets an aggregated summary of the financial data including total income, total expenses, net balance, and recent history. Available to VIEWER, ANALYST, and ADMIN."
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "YOUR_JWT_TOKEN_HERE",
+      "type": "string"
+    }
+  ]
+}
